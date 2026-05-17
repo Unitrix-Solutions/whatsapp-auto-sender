@@ -14,7 +14,6 @@
     "https://web.whatsapp.com/*"
   ],
   "action": {
-    "default_popup": "popup.html",
     "default_title": "WhatsApp Auto Sender Pro",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -26,6 +25,20 @@
     "service_worker": "background.js",
     "type": "module"
   },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "css": ["content.css"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html", "popup.js", "icons/*"],
+      "matches": ["https://web.whatsapp.com/*"]
+    }
+  ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none';"
   },

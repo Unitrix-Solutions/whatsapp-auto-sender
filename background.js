@@ -215,7 +215,7 @@ async function sendToNumber(phone, message, waLoadWait, pollMs, maxTries) {
 async function processNext() {
   const data = await storageGet([
     K.NUMBERS, K.MESSAGE, K.INDEX, K.TOTAL,
-    K.SENT, K.FAILED, K.FAILED_LIST,
+    K.SENT, K.SENT_LIST, K.FAILED, K.FAILED_LIST,
     K.RUNNING, K.PAUSED,
     K.DELAY_MIN, K.DELAY_MAX,
     K.RETRY_COUNT,
@@ -249,6 +249,7 @@ async function processNext() {
 
   // --- Update counters ---
   let newSent       = data[K.SENT]       || 0;
+  let newSentList   = data[K.SENT_LIST]  || [];
   let newFailed     = data[K.FAILED]     || 0;
   let newFailedList = data[K.FAILED_LIST] || [];
   let newRetryMap   = { ...retryMap };
@@ -256,6 +257,7 @@ async function processNext() {
 
   if (sent) {
     newSent++;
+    newSentList.push(phone);
     newIndex++;
     delete newRetryMap[phone];  // Clear retry state on success
   } else {
@@ -280,6 +282,7 @@ async function processNext() {
   await storageSet({
     [K.INDEX]:       newIndex,
     [K.SENT]:        newSent,
+    [K.SENT_LIST]:   newSentList,
     [K.FAILED]:      newFailed,
     [K.FAILED_LIST]: newFailedList,
     [K.REMAINING]:   remaining,
@@ -338,6 +341,7 @@ async function handleMessage(msg) {
         [K.INDEX]:       0,
         [K.TOTAL]:       numbers.length,
         [K.SENT]:        0,
+        [K.SENT_LIST]:   [],
         [K.FAILED]:      0,
         [K.FAILED_LIST]: [],
         [K.REMAINING]:   numbers.length,
@@ -374,6 +378,7 @@ async function handleMessage(msg) {
         [K.INDEX]:        0,
         [K.TOTAL]:        0,
         [K.SENT]:         0,
+        [K.SENT_LIST]:    [],
         [K.FAILED]:       0,
         [K.FAILED_LIST]:  [],
         [K.REMAINING]:    0,
@@ -389,3 +394,21 @@ async function handleMessage(msg) {
       return { status: "unknown_action" };
   }
 }
+
+// ── Action Click Listener (Floating Widget Toggle) ───────────────────────────
+
+chrome.action.onClicked.addListener((tab) => {
+  if (tab.url && tab.url.includes("web.whatsapp.com")) {
+    chrome.tabs.sendMessage(tab.id, { action: "toggle_widget" }).catch(err => {
+      console.warn("[WA-Sender] Could not send toggle_widget message. Injecting manually.", err);
+      // Fallback: inject programmatically if it wasn't loaded (e.g. extension just installed)
+      chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] });
+      chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }, () => {
+        chrome.tabs.sendMessage(tab.id, { action: "toggle_widget" });
+      });
+    });
+  } else {
+    // If clicked on a non-WhatsApp tab, open WhatsApp Web
+    chrome.tabs.create({ url: "https://web.whatsapp.com" });
+  }
+});

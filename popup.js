@@ -42,6 +42,7 @@ const K = {
   SENT:          "sent",
   FAILED:        "failed",
   FAILED_LIST:   "failedList",
+  SENT_LIST:     "sentList",
   REMAINING:     "remaining",
   RUNNING:       "running",
   PAUSED:        "paused",
@@ -86,6 +87,24 @@ document.querySelectorAll(".tab").forEach(tab => {
     tab.classList.add("active");
     $(`panel-${tab.dataset.tab}`).classList.add("active");
   });
+});
+
+// ── File Import ───────────────────────────────────────────────────────────
+
+on("btn-import", "click", () => $("file-import").click());
+
+on("file-import", "change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const content = ev.target.result;
+    const current = $("numbers").value.trim();
+    $("numbers").value = current ? current + "\n" + content : content;
+    $("numbers").dispatchEvent(new Event("input"));
+    $("file-import").value = "";
+  };
+  reader.readAsText(file);
 });
 
 // ── Live input feedback ───────────────────────────────────────────────────
@@ -177,6 +196,33 @@ on("btn-retry-failed", "click", async () => {
   document.querySelector('[data-tab="progress"]').click();
 });
 
+on("btn-download-report", "click", async () => {
+  const data = await storageGet([K.NUMBERS, K.SENT_LIST, K.FAILED_LIST]);
+  const numbers = data[K.NUMBERS] || [];
+  const sentList = new Set(data[K.SENT_LIST] || []);
+  const failedList = new Set(data[K.FAILED_LIST] || []);
+
+  if (!numbers.length) return;
+
+  let csvContent = "Phone Number,Status\n";
+  for (const num of numbers) {
+    let status = "Pending";
+    if (sentList.has(num)) status = "Sent";
+    else if (failedList.has(num)) status = "Failed";
+    csvContent += `${num},${status}\n`;
+  }
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `whatsapp-report-${new Date().toISOString().split("T")[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
 // ── Messaging helpers ─────────────────────────────────────────────────────
 
 function storageGet(keys) {
@@ -259,6 +305,18 @@ async function refreshUI() {
   resumeBtn.disabled = !running || !paused;
   pauseBtn2.disabled  = !running || paused;
   resumeBtn2.disabled = !running || !paused;
+
+  // Download Report button state
+  const downloadBtn = $("btn-download-report");
+  if (total > 0) {
+    downloadBtn.disabled = false;
+    downloadBtn.style.color = "#fff";
+    downloadBtn.style.background = "var(--blue)";
+  } else {
+    downloadBtn.disabled = true;
+    downloadBtn.style.color = "var(--text-dim)";
+    downloadBtn.style.background = "#2a2a3a";
+  }
 
   // Failed list
   const failedList = data[K.FAILED_LIST] || [];

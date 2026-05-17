@@ -1,0 +1,92 @@
+#wa-sender-widget {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 340px;
+  background: #0f1117;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  transition: height 0.3s ease;
+  border: 1px solid #2e3248;
+}
+
+#wa-sender-widget.collapsed {
+  width: auto;
+  height: auto;
+}
+
+#wa-sender-header {
+  background: linear-gradient(135deg, #1a2f1e 0%, #0f1a12 100%);
+  border-bottom: 1px solid #1f3a24;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: grab;
+  user-select: none;
+}
+
+#wa-sender-header:active {
+  cursor: grabbing;
+}
+
+#wa-sender-icon {
+  width: 24px;
+  height: 24px;
+  background: #25d366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+#wa-sender-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e8f5e9;
+  flex-grow: 1;
+  white-space: nowrap;
+}
+
+.wa-sender-btn {
+  background: transparent;
+  border: none;
+  color: #8a90a8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+  line-height: 1;
+}
+
+.wa-sender-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+#wa-sender-iframe {
+  width: 100%;
+  height: 480px;
+  border: none;
+  background: #0f1117;
+}
+
+#wa-sender-widget.collapsed #wa-sender-title-container,
+#wa-sender-widget.collapsed #wa-sender-iframe {
+  display: none !important;
+}
+
+#wa-sender-widget.collapsed #wa-sender-header {
+  padding: 8px;
+  border-radius: 10px;
+  border-bottom: none;
+}

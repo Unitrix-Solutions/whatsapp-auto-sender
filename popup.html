@@ -237,28 +237,23 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-icon">💬</div>
-    <div class="header-text">
-      <h1>WA Auto Sender</h1>
-      <p>Powered by Unitrix Solutions</p>
-    </div>
-    <div id="status-badge" class="idle">Idle</div>
-  </div>
-
   <!-- Tab navigation -->
-  <div class="tabs">
+  <div class="tabs" style="position:relative; padding-right:60px;">
     <button class="tab active" data-tab="compose">Compose</button>
     <button class="tab" data-tab="progress">Progress</button>
     <button class="tab" data-tab="failed">Failed</button>
+    <div id="status-badge" class="idle" style="position:absolute; right:10px; top:10px;">Idle</div>
   </div>
 
   <!-- ── COMPOSE PANEL ── -->
   <div class="panel active" id="panel-compose">
 
     <div class="field">
-      <label>Phone Numbers <span>(one per line, with country code)</span></label>
+      <label style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Phone Numbers <span>(one per line, with country code)</span></span>
+        <button id="btn-import" style="padding:4px 8px; font-size:10px; width:auto; flex:none;">📥 Import</button>
+      </label>
+      <input type="file" id="file-import" accept=".txt,.csv" style="display:none" />
       <textarea id="numbers" rows="5" placeholder="919876543210&#10;14155552671&#10;447911123456"></textarea>
       <div class="number-meta">
         <span id="num-count">0 numbers</span>
@@ -323,6 +318,9 @@
       <button id="btn-pause2"  disabled>⏸ Pause</button>
       <button id="btn-resume2" disabled>↺ Resume</button>
       <button id="btn-reset2">✕ Reset</button>
+    </div>
+    <div class="btn-row" style="margin-top:6px">
+      <button id="btn-download-report" disabled style="background:#2a2a3a;color:var(--text-dim);">📊 Download Report</button>
     </div>
   </div>
 
