@@ -1,5 +1,5 @@
 # WhatsApp Auto Sender Pro — v2.0
-**A professional Chrome/Edge MV3 extension for reliable bulk WhatsApp messaging.**
+**A professional Chrome/Edge MV3 extension for reliable bulk WhatsApp messaging. Powered by Unitrix Solutions.**
 
 ---
 
