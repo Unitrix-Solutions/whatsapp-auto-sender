@@ -266,7 +266,8 @@ chrome.windows.create({ ..., focused: false })
 A user pasting a list with duplicates would send the same person multiple messages. **v2** deduplicates via `[...new Set(valid)]` before sending.
 
 #### Issue 14 — ETA Uses Wrong Average Delay
-**v1:** `const avgDelay = 40` (seconds) — this is correct for the default 30–50s range but becomes wrong if the user could configure the delay. **v2** could compute this dynamically; currently uses the same constant but is noted for future improvement.
+**v1:** `const avgDelay = 40` (seconds) — this is correct for the default 30–50s range but becomes wrong if the user configures the delay. 
+**v2 fix** computes the ETA dynamically using the average of the user's selected `Min Delay` and `Max Delay` bounds.
 
 #### Issue 15 — `web.txt` in Extension Package
 The `web.txt` file contains Google Analytics/GTM snippets unrelated to the extension. It adds nothing but bloat and confusion. **Removed in v2.**
@@ -338,11 +339,9 @@ lib/
 1. Open Chrome → `chrome://extensions`
 2. Enable **Developer Mode** (top right)
 3. Click **Load unpacked**
-4. Select the `whatsapp-auto-sender-v2/` folder
+4. Select the `whatsapp-auto-sender/` folder
 5. Open [web.whatsapp.com](https://web.whatsapp.com) and scan QR if needed
 6. Click the extension icon and configure your campaign
-
-**Note:** Add real PNG icon files at `icons/icon16.png`, `icons/icon48.png`, `icons/icon128.png`.
 
 ---
 

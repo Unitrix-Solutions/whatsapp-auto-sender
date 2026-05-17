@@ -197,6 +197,7 @@ async function refreshUI() {
   const data = await storageGet([
     K.SENT, K.FAILED, K.FAILED_LIST, K.REMAINING,
     K.TOTAL, K.RUNNING, K.PAUSED, K.NEXT_SEND_TIME,
+    K.DELAY_MIN, K.DELAY_MAX,
   ]);
 
   const sent      = data[K.SENT]      || 0;
@@ -235,8 +236,10 @@ async function refreshUI() {
   // ETA
   const etaEl = $("eta");
   if (running && !paused && remaining > 0) {
-    const avgDelay = 40;  // seconds (rough midpoint of default 30–50)
-    const estSec   = remaining * avgDelay;
+    const delayMin = data[K.DELAY_MIN] ?? 30;
+    const delayMax = data[K.DELAY_MAX] ?? 50;
+    const avgDelay = (delayMin + delayMax) / 2;
+    const estSec   = Math.floor(remaining * avgDelay);
     const m        = Math.floor(estSec / 60);
     const s        = estSec % 60;
     etaEl.textContent = `ETA ~${m}m ${s}s`;
