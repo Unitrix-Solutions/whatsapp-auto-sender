@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "WhatsApp Auto Sender Pro",
+  "version": "2.0.0",
+  "description": "Reliably send bulk WhatsApp messages with smart delays, retry logic, and detailed tracking.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "alarms",
+    "windows"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "WhatsApp Auto Sender Pro"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none';"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
