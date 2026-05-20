@@ -329,4 +329,4 @@ const pollInterval = setInterval(refreshUI, 1000);
 refreshUI();
 
 // Clean up on popup close to avoid ghost intervals (minor hygiene)
-window.addEventListener("unload", () => clearInterval(pollInterval));
+window.addEventListener("pagehide", () => clearInterval(pollInterval));
